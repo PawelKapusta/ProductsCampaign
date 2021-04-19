@@ -124,7 +124,7 @@ const FormPaper = ({ product = {}, handleClose, handleEditProduct, handleCreateP
           </Select>
         </FormControl>
       </div>
-      <InputLabel>Radius</InputLabel>
+      <InputLabel>Radius in km</InputLabel>
       <Input
         className={classes.input}
         value={data?.radius}

@@ -52,7 +52,6 @@ const buttonProps = {
 const IconButton = ({ onClick, type, text }) => {
   return (
     <Button onClick={onClick} {...buttonProps[type]}>
-      {' '}
       {text}
     </Button>
   );
