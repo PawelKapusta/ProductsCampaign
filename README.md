@@ -1,11 +1,12 @@
-##ProductsCampaign-Client
+## ProductsCampaign-Client
 
 ## How to run:
 
   - npm install
   - npm start
 
-Client is running on port 3000. It is also deploy on netlify: https://productscampaign.netlify.app/ .
+Client is running on port 3000. It is also deploy on netlify: https://productscampaign.netlify.app/, but to run it correctly you have to clone backend repository:
+https://github.com/PawelKapusta/ProductsCampaign-Server
 
 
 ## Screenshots:
