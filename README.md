@@ -5,8 +5,8 @@
   - npm install
   - npm start
 
-Client is running on port 3000. It is also deployed on netlify: https://productscampaign.netlify.app/ .
-![image]()
+Client is running on port 3000. It is also deploy on netlify: https://productscampaign.netlify.app/ .
+
 
 ## Screenshots:
 <img src="https://user-images.githubusercontent.com/61249196/115221740-47b94080-a10a-11eb-8428-fd4cb9dcd852.png">
