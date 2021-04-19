@@ -1,6 +1,11 @@
 import React from 'react';
 import HomePage from './pages/HomePage';
+import { ProductsProvider } from './context/ProductsContext';
 
-const App = () => <HomePage />;
+const App = () => (
+  <ProductsProvider>
+    <HomePage />
+  </ProductsProvider>
+);
 
 export default App;

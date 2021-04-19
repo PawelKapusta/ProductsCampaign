@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useState } from 'react';
+import React, { forwardRef, useContext, useEffect, useState } from 'react';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -16,6 +16,8 @@ import Slide from '@material-ui/core/Slide';
 import FormPaper from '../FormPaper/FormPaper';
 import { createProduct, deleteProduct, updateProduct } from '../../api';
 import IconButton from '../Button/IconButton';
+import TableBodyContent from '../TableBodyContent/TableBodyContent';
+import ProductsContext from '../../context/ProductsContext';
 
 const columns = [
   { id: 'name', label: 'Name', minWidth: 100, align: 'center' },
@@ -27,6 +29,7 @@ const columns = [
   { id: 'town', label: 'Town', minWidth: 120, align: 'center' },
   { id: 'radius', label: 'Radius', minWidth: 30, align: 'center' },
 ];
+
 const useStyles = makeStyles({
   root: {
     display: 'flex',
@@ -40,27 +43,20 @@ const useStyles = makeStyles({
   container: {
     maxHeight: 740,
   },
-  buttons: {
-    display: 'flex',
-    justifyContent: 'center',
-    margin: 10,
-  },
-  row: {
-    fontSize: '.9rem',
-  },
 });
 
 const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const ProductsList = ({ products }) => {
+const ProductsList = () => {
   const classes = useStyles();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [open, setOpen] = useState(false);
   const [editRowId, setEditRowId] = useState(0);
   const [editProductData, setEditProductData] = useState({});
+  const { products, refetchData } = useContext(ProductsContext);
 
   useEffect(() => {
     const product = products.find((product) => product.id === editRowId);
@@ -71,10 +67,12 @@ const ProductsList = ({ products }) => {
     setEditRowId(id);
     setOpen(true);
   };
+
   const handleClickOpenCreate = () => {
-    setEditRowId(uuid());
+    setEditRowId(-1);
     setOpen(true);
   };
+
   const handleClose = () => {
     setOpen(false);
   };
@@ -87,33 +85,34 @@ const ProductsList = ({ products }) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
+
   const handleCreateProduct = async (product) => {
     await createProduct(product);
-
-    window.location.reload(true);
+    refetchData();
+    setEditRowId(-1);
+    setOpen(false);
   };
+
   const handleRemoveProduct = async (id) => {
     if (window.confirm('Are you sure you want to remove this product?')) {
       await deleteProduct(id);
-
-      window.location.reload(true);
+      refetchData();
+      setEditRowId(-1);
+      setOpen(false);
     }
   };
+
   const handleEditProduct = async (id, data) => {
-    if (window.confirm('Are you sure you want to edit/save this changes?')) {
-      await updateProduct(id, data);
-
-      window.location.reload(true);
-    }
+    await updateProduct(id, data);
+    refetchData();
+    setEditRowId(-1);
+    setOpen(false);
   };
+
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <IconButton
-          type="create_btn"
-          text="Create Product"
-          onClick={() => handleClickOpenCreate()}
-        />
+        <IconButton type="create_btn" text="Create Product" onClick={handleClickOpenCreate} />
         <TableContainer className={classes.container}>
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
@@ -130,36 +129,13 @@ const ProductsList = ({ products }) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {products.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={uuid()}>
-                    {columns.map((column) => {
-                      const value = row[column.id];
-                      return (
-                        <TableCell className={classes.row} key={uuid()} align={column.align}>
-                          {column.format && typeof value === 'number'
-                            ? column.format(value)
-                            : value}
-                        </TableCell>
-                      );
-                    })}
-                    <span className={classes.buttons}>
-                      <IconButton
-                        onClick={() => {
-                          handleClickOpen(row.id);
-                        }}
-                        type="edit_btn"
-                        text="Edit"
-                      />
-                      <IconButton
-                        onClick={() => handleRemoveProduct(row.id)}
-                        type="delete_btn"
-                        text="Delete"
-                      />
-                    </span>
-                  </TableRow>
-                );
-              })}
+              <TableBodyContent
+                page={page}
+                rowsPerPage={rowsPerPage}
+                columns={columns}
+                handleClickOpen={handleClickOpen}
+                handleRemoveProduct={handleRemoveProduct}
+              />
             </TableBody>
           </Table>
         </TableContainer>

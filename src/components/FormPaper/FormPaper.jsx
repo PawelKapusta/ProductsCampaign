@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import InputLabel from '@material-ui/core/InputLabel';
 import Input from '@material-ui/core/Input';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import FormControl from '@material-ui/core/FormControl';
-import { cities, isEmptyObject } from '../../utils';
+import { isEmptyObject } from '../../utils';
 import DialogActions from '@material-ui/core/DialogActions';
 import IconButton from '../Button/IconButton';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import uuid from 'react-uuid';
+import ProductsContext from '../../context/ProductsContext';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -38,10 +40,24 @@ const useStyles = makeStyles((theme) => ({
   },
   buttons: {
     position: 'relative',
-    right: -20,
-    bottom: -5,
+    left: 20,
+    top: 10,
   },
 }));
+
+const cities = [
+  'Kraków',
+  'Wrocław',
+  'Warszawa',
+  'Łódź',
+  'Poznań',
+  'Gdańsk',
+  'Szczecin',
+  'Bydgoszcz',
+  'Lublin',
+  'Białystok',
+  'Rzeszów',
+];
 
 const FormPaper = ({ product = {}, handleClose, handleEditProduct, handleCreateProduct }) => {
   const classes = useStyles();
@@ -55,6 +71,7 @@ const FormPaper = ({ product = {}, handleClose, handleEditProduct, handleCreateP
     town: product.town,
     radius: product.radius,
   });
+
   return (
     <div className={classes.root}>
       <DialogTitle className={classes.editDialogTitle} id="alert-dialog-slide-title">
@@ -119,7 +136,9 @@ const FormPaper = ({ product = {}, handleClose, handleEditProduct, handleCreateP
             label="Town"
           >
             {cities?.map((city) => (
-              <MenuItem value={city}>{city}</MenuItem>
+              <MenuItem key={uuid()} value={city}>
+                {city}
+              </MenuItem>
             ))}
           </Select>
         </FormControl>
@@ -132,9 +151,7 @@ const FormPaper = ({ product = {}, handleClose, handleEditProduct, handleCreateP
         type="number"
       />
       <DialogActions className={classes.buttons}>
-        <IconButton onClick={handleClose} type="cancel_btn" text="Cancel">
-          Cancel
-        </IconButton>
+        <IconButton onClick={handleClose} type="cancel_btn" text="Cancel" />
         <IconButton
           onClick={
             isEmptyObject(product)
@@ -143,9 +160,7 @@ const FormPaper = ({ product = {}, handleClose, handleEditProduct, handleCreateP
           }
           type="save_btn"
           text="Save"
-        >
-          Save
-        </IconButton>
+        />
       </DialogActions>
     </div>
   );
